@@ -1,23 +1,30 @@
-package myisa;
 
 import java.util.HashMap;
 
 public class Memory
 {
-   private HashMap<Byte,Integer> memory;
+   private HashMap<Integer,Integer> memory;
 
    public Memory()
    {
-      memory = new HashMap<Byte,Integer>();
+      memory = new HashMap<Integer,Integer>();
+      loadMemory();
    }
 
-   private int load(byte location)
+   public int load(int location)
    {
       return memory.get(location);
    }
 
-   private void store(byte location, int value)
+   public void store(int location, int value)
    {
       memory.put(location,value);
    }
+
+   private void loadMemory()
+   {
+      for(int i = -32768; i<32768; i++)
+         memory.put(i,0);
+   }
+
 }

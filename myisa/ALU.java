@@ -1,4 +1,3 @@
-package myisa;
 
 public class ALU
 {
