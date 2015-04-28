@@ -109,12 +109,11 @@ public class Registers
       return data;
 
    }
-   public void setValues(String addr, int value)
+   public void setValue(String addr, int value)
    {
       int[] data = adjustData(value);
       int low = data[0];
       int high = data[1];
-
       if(addr.equals("A"))
       {
          registers[0][0]= low;

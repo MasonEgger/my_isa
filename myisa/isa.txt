@@ -1,16 +1,21 @@
-0 A B C - Adds the values in registers B and C and stores into register A
-1 A B C - Subtracts the values in registers B and C and stores into register A
-2 A B C - Multiplys the values in registers B and C and stores into register A
-3 A B C - Divides the values in registers B and C and stores into register A
-4 A 1 0 - Load Immediate, Loads 1 into A. The 0 is ignored for fixed length instructions
-5 A B 0 - Load, Loads into A what is at the memory address stored in B
-6 A B 0 - Store, Stores the value of A into the memory address stored in B
-7 A 0 0 - In, user input stored into memory address at A
-8 A 0 0 - Out, output value in memory address at A
-9 A 0 0 - Push. Pushes A onto the stack
-10 A 0 0 - Pop. Pops of the stack into A
-11 A 0 0 - Jump. Increments the program counter by the value of A (A may be + or -)
-12 A B C - Jump if equal. Increments the program counter by the value of A (A may be + or -) if values at B and C are equal
+add A B C - Adds the values in registers B and C and stores into register A
+sub A B C - Subtracts the values in registers B and C and stores into register A
+mul A B C - Multiplys the values in registers B and C and stores into register A
+div A B C - Divides the values in registers B and C and stores into register A
+li A 1 0 - Load Immediate, Loads 1 into A. The 0 is ignored for fixed length instructions
+ld A B 0 - Load, Loads into A what is at the memory address stored in B
+st A B 0 - Store, Stores the value of A into the memory address stored in B
+in A 0 0 - In, user input stored into register A
+out A 0 0 - Out, output value in register A
+push A 0 0 - Push. Pushes A onto the stack
+pop A 0 0 - Pop. Pops of the stack into A
+j A 0 0 - Jump. Increments the program counter by the value of A (A may be + or -)
+beq A B C - Jump if equal. Increments the program counter by the value of A (A may be + or -) if values at B and C are equal
+bne A B C - Jump if not equal.
+bgt A B C - Jump if greater than.
+bge A B C - Jump if greater than or equal.
+blt A B C - Jump if less than.
+ble A B C - Jump if less than or equal.
 
 Caveats:
 F register can't be used
