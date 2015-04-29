@@ -1,5 +1,6 @@
 import java.util.HashMap;
 import java.util.ArrayList;
+import static java.lang.System.*;
 
 public class Registers
 {
@@ -71,7 +72,7 @@ public class Registers
       {
          return registers[5][0] + registers[5][1];
       }
-      else if(addr.equals("SP"))
+      else if(addr.equals("PC"))
       {
          return registers[6][0] + registers[6][1];
       }
@@ -186,5 +187,24 @@ public class Registers
          registers[6][0] = low;
          registers[6][1] = high;
       }
+   }
+
+   public void printRegisters()
+   {
+      out.println("-----------------------------");
+      out.printf("|A%5d|F%5d|A' X  |F' X  |\n",registers[0][0],registers[0][1]);
+      out.println("-----------------------------");
+      out.printf("|B%5d|C%5d|B' X  |C' X  |\n",registers[1][0],registers[1][1]);
+      out.println("-----------------------------");
+      out.printf("|D%5d|E%5d|D' X  |E' X  |\n",registers[2][0],registers[2][1]);
+      out.println("-----------------------------");
+      out.printf("|H%5d|L%5d|H' X  |L' X  |\n",registers[3][0],registers[3][1]);
+      out.println("-----------------------------");
+      out.printf("|IX%11d|IY%11d|\n",registers[4][0]+registers[4][1],registers[4][2]+registers[4][3]);
+      out.println("-----------------------------");
+      out.printf("|SP%11d|I  X  |R  X  |\n",registers[5][0]+registers[5][1]);
+      out.println("-----------------------------");
+      out.printf("|PC%11d|-------------|\n",registers[6][0]+registers[6][1]);
+      out.println("-----------------------------");
    }
 }

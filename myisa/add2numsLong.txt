@@ -1,0 +1,4 @@
+in AF 0 0 
+in BC 0 0 
+add DE BC AF
+out DE 0 0

@@ -1,4 +1,4 @@
 in A 0 0 
 in B 0 0 
-add C B A
+add C A B
 out C 0 0

@@ -4,34 +4,47 @@ import java.util.*;
 
 public class CPU
 {
+   //Hardware Component Class variables
    private ALU alu;
    private Registers registers;   
+   private Memory memory;
+
+   //IO devices
    private Scanner file;
    private Scanner keyboard;
-   private Memory memory;
+
+   //Hardware devices
    private int programCounter;
    private ArrayList<ArrayList<String>> programMemory;
    private HashMap<String, Integer> instructionMap;   
+   private Stack<Integer> stack;
 
+   //Instruction variables
    private int instruction;
    private String opcode, op1, op2, op3;
-   private int immediate;
-   private int reg1, reg2, reg3;
+
 
    public CPU(Memory memory)
    {
       alu = new ALU();
       registers = new Registers();
-      keyboard = new Scanner(in);
       this.memory = memory;
+
+      keyboard = new Scanner(in);
       programMemory = new ArrayList<ArrayList<String>>();
       instructionMap = new HashMap<String, Integer>();
+      stack = new Stack<Integer>();      
+
       loadInstMap();
       programCounter = 0;
    }
       
    public int execute(String fileName)
    {
+      //decoded variable information
+      int reg1, reg2, reg3;
+      int answer = 0;
+
       programCounter = loadInstructions(fileName);
       if(programCounter == -1)
          return 2;
@@ -41,50 +54,49 @@ public class CPU
       {
          //STAGES 1 of the MIPS Pipeline
          fetchAndDecode(PC);
-         if(instruction == 4)
-            out.println(opcode + " " + op1 + " " + immediate + " " + op3);
-         else
-            out.println(opcode + " " + op1 + " " + op2 + " " + op3); 
 
+         out.println(opcode + " " + op1 + " " + op2 + " " + op3); 
+         registers.printRegisters();
          //STAGE 2 of the MIPS pipeline
          instruction = instructionMap.get(opcode);
          reg1 = registers.getValue(op1);
          reg2 = registers.getValue(op2);
          reg3 = registers.getValue(op3);
+         
 
          //Stage 3 and/or 4 of the MIPS Pipeline, depending on the instruction
          switch(instruction)
          {
             case 0: 
-               out.println("op1 is: " + op1);
-               registers.setValue(op1, alu.add(reg2,reg3));
+               answer = alu.add(reg2,reg3);
                break;
             case 1:
-               registers.setValue(op1, alu.sub(reg2, reg3));
+               answer = alu.sub(reg2, reg3);
                break;
             case 2:
-               registers.setValue(op1, alu.mul(reg2, reg3));
+               answer = alu.mul(reg2, reg3);
                break;
             case 3:
-               registers.setValue(op1, alu.div(reg2, reg3));
+               answer = alu.div(reg2, reg3);
                break;
             case 4:
-               registers.setValue(op1, immediate);
+               answer = Integer.parseInt(op2);
                break;
             case 5:
-               registers.setValue(op1, memory.load(reg2));
+               answer =  memory.load(reg2);
                break;
             case 6: 
-               memory.store(registers.getValue(op2),reg1); 
+               memory.store(reg2,reg1); 
                break;
             case 7: 
                out.print("Enter an integer: "); 
-               registers.setValue(op1,keyboard.nextInt()); 
+               answer = keyboard.nextInt();
                break;
             case 8: 
                out.println(reg1);
                break;
             case 9:
+               
                break;
             case 10:
                break;
@@ -94,8 +106,35 @@ public class CPU
             case 12: 
                PC += alu.beq(reg1, reg2, reg3);
                break;
+            case 13:
+               PC += alu.bne(reg1, reg2, reg3);
+               break;
+            case 14:
+               PC += alu.bgt(reg1, reg2, reg3);
+               break;
+            case 15:
+               PC += alu.bge(reg1, reg2, reg3);
+               break;
+            case 16:
+               PC += alu.blt(reg1, reg2, reg3);
+               break;
+            case 17:
+               PC += alu.ble(reg1, reg2, reg3);
+               break;
+            case 18:
+               PC += alu.inc(reg1);
+               break;
+            case 19:
+               PC += alu.dec(reg1);
+               break;
+            case 20:
+               break;
             default:
+               break;
          }
+
+         //Stage 5 of the MIPS Pipeline - Register writeback
+         registers.setValue(op1,answer);
       }
       return 0;
    }
@@ -103,14 +142,9 @@ public class CPU
    private void fetchAndDecode(int pc)
    {
       ArrayList<String> inst = programMemory.get(pc);
-      //if(!validateInstruction(inst))  VALIDATE IN LOAD
-      //   return false;
       opcode = inst.get(0);
       op1 = inst.get(1);
-      if(instruction == 4)
-         immediate = Integer.parseInt(inst.get(2));
-      else
-         op2 = inst.get(2);
+      op2 = inst.get(2);
       op3 = inst.get(3);
    }
 
@@ -130,7 +164,12 @@ public class CPU
       while(file.hasNextLine())
       {
          line = file.nextLine();
-         programMemory.add(new ArrayList<String>(Arrays.asList(line.split(" "))));
+         programMemory.add(
+            new ArrayList<String>(
+               Arrays.asList(
+                  line.split(" "))));
+         if(!validateInstruction(programMemory.get(PC)))
+            return -2;
          PC++;
       }
       return PC;
@@ -138,7 +177,34 @@ public class CPU
 
    private boolean validateInstruction(ArrayList<String> inst)
    {
+      String regNames = "AFBCDEHLIXIYSPC0";
+      String op0, op1, op2, op3;
+      op0 = inst.get(0);
+      op1 = inst.get(1);
+      op2 = inst.get(2);
+      op3 = inst.get(3);
+
+      if(inst.size() > 4)
+         return false;
+      if(!instructionMap.containsKey(op0))
+         return false;
+      if(!regNames.contains(op1))
+         return false;
+      try  
+      {  
+         int i = Integer.parseInt(op2);
+         return true;  
+      }  
+      catch(NumberFormatException nfe)  
+      {  
+         if(!regNames.contains(op2))
+            return false;  
+      }
+      if(!regNames.contains(op3))
+         return false;
+
       return true;
+
    }
 
    private void loadInstMap()
@@ -147,7 +213,7 @@ public class CPU
       instructionMap.put("sub",1);
       instructionMap.put("mul",2);
       instructionMap.put("div",3);
-      instructionMap.put("li",4);
+      instructionMap.put("ldi",4);
       instructionMap.put("ld",5);
       instructionMap.put("st",6);
       instructionMap.put("in",7);
@@ -156,6 +222,14 @@ public class CPU
       instructionMap.put("pop", 10);
       instructionMap.put("j", 11);
       instructionMap.put("beq", 12);
+      instructionMap.put("bne", 13);
+      instructionMap.put("bgt", 14);
+      instructionMap.put("bge", 15);
+      instructionMap.put("blt", 16);
+      instructionMap.put("ble", 17);
+      instructionMap.put("inc", 18);
+      instructionMap.put("dec", 19);
+      instructionMap.put("rex", 20);
    }
 
 }

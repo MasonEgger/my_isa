@@ -2,7 +2,7 @@ add A B C - Adds the values in registers B and C and stores into register A
 sub A B C - Subtracts the values in registers B and C and stores into register A
 mul A B C - Multiplys the values in registers B and C and stores into register A
 div A B C - Divides the values in registers B and C and stores into register A
-li A 1 0 - Load Immediate, Loads 1 into A. The 0 is ignored for fixed length instructions
+ldi A 1 0 - Load Immediate, Loads 1 into A. The 0 is ignored for fixed length instructions
 ld A B 0 - Load, Loads into A what is at the memory address stored in B
 st A B 0 - Store, Stores the value of A into the memory address stored in B
 in A 0 0 - In, user input stored into register A

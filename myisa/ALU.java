@@ -2,10 +2,8 @@ import java.util.Stack;
 
 public class ALU
 {
-   Stack <Integer> stack;
    public ALU()
    {
-      stack = new Stack<Integer>();
    }
 
    public int add(int op1, int op2)
@@ -66,14 +64,13 @@ public class ALU
       return 0;
    }
 
-   public void push(int value)
+   public int inc(int op1)
    {
-      stack.push(value);
+      return ++op1;
    }
 
-   public int pop(int value)
+   public int dec(int op1)
    {
-      return stack.pop();
+      return --op1;
    }
-
 }

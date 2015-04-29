@@ -11,6 +11,12 @@ public class Main
 
       out.print("Enter the name of the file you wish to execute: ");
       String fileName = kb.nextLine();
-      cpu.execute(fileName);
+      int result = cpu.execute(fileName);
+      if(result == 0)
+         out.println("Program successfully terminated");
+      else if(result == 2)
+         out.println("Program exited with ERROR: FILE NOT FOUND");
+      else if(result == 3)
+         out.println("Program exited with ERROR: INVALID INSTRUCTION IN FILE");
    }
 }
