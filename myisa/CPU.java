@@ -43,7 +43,8 @@ public class CPU
    {
       //decoded variable information
       int reg1, reg2, reg3;
-      int answer = 0;
+      int answer;
+      boolean writeBack;
 
       programCounter = loadInstructions(fileName);
       if(programCounter == -1)
@@ -52,6 +53,8 @@ public class CPU
          return 3;
       for(int PC = 0; PC<programCounter; PC++)
       {
+         answer = 0;
+         writeBack = true;
          //STAGES 1 of the MIPS Pipeline
          fetchAndDecode(PC);
 
@@ -100,32 +103,44 @@ public class CPU
                break;
             case 10:
                break;
+            //WHY THE PC-- & reg1 - 1
+            //Since the loop counter automatically increments by 1 every time
+            //that may alter the jump distance. For this to be fixed we must
+            //alter the PC by -1 when jumps are taken
             case 11: 
                PC += reg1; 
+               writeBack = false;
+               PC--;
                break;
             case 12: 
-               PC += alu.beq(reg1, reg2, reg3);
+               PC += alu.beq(reg1-1, reg2, reg3);               
+               writeBack = false;
                break;
             case 13:
-               PC += alu.bne(reg1, reg2, reg3);
+               PC += alu.bne(reg1-1, reg2, reg3);
+               writeBack = false;
                break;
             case 14:
-               PC += alu.bgt(reg1, reg2, reg3);
+               PC += alu.bgt(reg1-1, reg2, reg3);
+               writeBack = false;
                break;
             case 15:
-               PC += alu.bge(reg1, reg2, reg3);
+               PC += alu.bge(reg1-1, reg2, reg3);
+               writeBack = false;
                break;
             case 16:
-               PC += alu.blt(reg1, reg2, reg3);
+               PC += alu.blt(reg1-1, reg2, reg3);
+               writeBack = false;
                break;
             case 17:
-               PC += alu.ble(reg1, reg2, reg3);
+               PC += alu.ble(reg1-1, reg2, reg3);
+               writeBack = false;
                break;
             case 18:
-               PC += alu.inc(reg1);
+               answer = alu.inc(reg1);
                break;
             case 19:
-               PC += alu.dec(reg1);
+               answer = alu.dec(reg1);
                break;
             case 20:
                break;
@@ -134,7 +149,8 @@ public class CPU
          }
 
          //Stage 5 of the MIPS Pipeline - Register writeback
-         registers.setValue(op1,answer);
+         if(writeBack)
+            registers.setValue(op1,answer);
       }
       return 0;
    }
@@ -229,7 +245,6 @@ public class CPU
       instructionMap.put("ble", 17);
       instructionMap.put("inc", 18);
       instructionMap.put("dec", 19);
-      instructionMap.put("rex", 20);
    }
 
 }
