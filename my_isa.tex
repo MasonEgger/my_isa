@@ -1,0 +1,104 @@
+
+\title{A Custom ISA and Emulator}
+\author{
+        Mason Egger \\
+                Undergraduate Computer Science Major\\
+                Texas State University\\
+}
+\date{\today}
+
+\documentclass[12pt]{article}
+\usepackage{graphicx}
+\graphicspath{ {images/} }
+
+\begin{document}
+\maketitle
+
+
+
+\section{Introduction}
+The purpose of this project was to give a deeper insight to the complexity and design of Instruction Set Architectures.
+This design is a derivative of two common and historically significant ISAs. Implementation of this ISA was done in Java,
+allowing for the design of different hardware components to be abstracted out into classes. 
+
+\paragraph{Outline}
+The remainder of this article is organized as follows.
+Section~\ref{design choices} explains the different aspects of this ISA
+and where they were derived from. 
+Section~\ref{instructions} contains a list of all supported instructions. 
+Section~\ref{sample code} contains code used to test all functionality of the ISA and Emulator.
+Section~\ref{results} shows output of the run of the sample code. The output contains a graphical represenation of the registers as they are being updated. 
+Finally, Section~\ref{conclusions} summarizes the project and conlusions drawn.
+
+\section{Design Choices}\label{design choices}
+This design is based heavily on two very important RISC based ISAs, MIPS and z80. The choice to combine these two was inspired by the register design 
+of z80 (which eventually led to the current design in x86) as well as the fixed instruction length of MIPS. As seen in the figure below the z80 
+register design allows for register combining to allow for larger variables to be stored, but not waste the entire address space on a value that 
+could be done in a fraction of the space. This ISA does currently support register combinations. 
+
+\centerline{\includegraphics{registers}}
+
+\section{Instructions}\label{instructions}
+
+\centerline{\textbf{The supported instructions are listed below.}}
+
+The instructions were designed according to the following opcode. In the instance where not all operands were needed, 0s were placed substituted to 
+allow for fixed length instructions\\
+
+\begin{tabular}{c | c | c | c}
+\textbf{instruction} & \textbf{storage} & \textbf{register 1} & \textbf{register 2} \\
+\end{tabular}
+
+
+\begin{tabular}{ r | l } 
+add A B C & Adds B and C  \\
+sub A B C & Subtracts the values in registers B and C and stores into register A \\
+mul A B C & Multiplys the values in registers B and C and stores into register A \\
+div A B C & Divides the values in registers B and C and stores into register A \\
+ldi A 1 0 & Load Immediate, Loads 1 into A. \\
+ld A B 0 & Load, Loads into A what is at the memory address stored in B \\
+st A B 0 & Store, Stores the value of A into the memory address stored in B \\
+in A 0 0 & In, user input stored into register A \\ 
+out A 0 0 & Out, output value in register A \\
+push A 0 0 & Push. Pushes A onto the stack \\
+pop A 0 0 & Pop. Pops of the stack into A \\
+j A 0 0 & Jump. \\
+beq A B C & Jump if equal. \\
+bne A B C & Jump if not equal. \\
+bgt A B C & Jump if greater than. \\
+bge A B C & Jump if greater than or equal. \\
+blt A B C & Jump if less than. \\
+ble A B C & Jump if less than or equal. \\
+inc A 0 0 & Increment the value of A by 1 \\
+dec A 0 0 & Decrement the value of A by 1 \\
+\end{tabular}
+
+Jumps increment the program counter by the value of A (A may be + or -)\\
+Jump comparisons are done for the values of B and C\\
+
+\section{Sample Code}\label{sample code}
+This simple program has the user input two numbers. If the first number is less than the second number the program adds the value of the first number 
+to a sum, increments the first value by 1, and continutes until the first value is equal to the second value. \\
+\begin{tabular} {l | r}
+in A 0 0 & Stores a user inputed value into register A \\
+in B 0 0 & Stores a user inputed value into register B \\
+ldi C 4 0 & Loads the immediate value of 4 into C for branch control \\
+ldi L -3 0 & Loads the immediate value of -3 into L for branch control \\
+bge C A B & Branch if A is greater than or equal to B \\
+add D D A & Add into register D the sum of D and A \\
+inc A 0 0 & Increments the value of A \\
+j L 0 0 & Branch - adjust program counter to sum of PC  and L \\
+out D 0 0 & Output the value of D \\
+\end{tabular}
+
+\section{Results}\label{results}
+The results of the above program are displayed in the accompanying text file named results.txt \\
+
+
+\section{Conclusions}\label{conclusions}
+Through this project greater insight was achieved on the complexities of design and style of Instruction Set Architectures. Large quantities of time 
+were spent on this design and implementation which led to success for the project. This project has a working emulator for a unique ISA designed by 
+the author. While there is still much more that could be implemented, this project is a success. 
+
+
+\end{document}
